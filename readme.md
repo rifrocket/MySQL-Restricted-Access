@@ -21,23 +21,38 @@ Run the following one-liner on your server to automatically download and execute
 sudo wget --no-check-certificate -O /usr/local/bin/mysql-ristrected-access.sh https://raw.githubusercontent.com/rifrocket/MySQL-Ristrected-Access/main/mysql-ristrected-access.sh; sudo bash /usr/local/bin/mysql-ristrected-access.sh
 ```
 
+Ensure the script is executable and run it with `bash`. You can make the script executable by running:
+
+```bash
+sudo chmod +x /usr/local/bin/mysql-ristrected-access.sh
+```
+
 ## Usage
 
 ### Create a User
 ```bash
 sudo /usr/local/bin/mysql-ristrected-access.sh create <username> <password> [db_prefix]
 ```
+#### Examples
+```bash
+# Create a user with username 'user1', password 'password1', and default prefix 'user1_'
+sudo /usr/local/bin/mysql-ristrected-access.sh create user1 password1
+
+# Create a user with a custom prefix
+sudo /usr/local/bin/mysql-ristrected-access.sh create user2 password2 customprefix_
+```
 
 ### Delete a User
 ```bash
 sudo /usr/local/bin/mysql-ristrected-access.sh delete <username>
 ```
-
-### Delete a Database
-To delete a database owned by a user, execute the following command from the MySQL shell as the user:
-```sql
-CALL `admin`.delete_prefixed_db('database_name');
+#### Examples
+```bash
+# Delete the user 'user1'
+sudo /usr/local/bin/mysql-ristrected-access.sh delete user1
 ```
+
+
 
 ## Notes
 - This script is specifically designed for Ubuntu servers and may not be compatible with other Linux distributions.
@@ -47,5 +62,5 @@ CALL `admin`.delete_prefixed_db('database_name');
 ## Optional: Add prefix while creating databases using phpMyAdmin
 
 ```bash
-sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Ristrected-Access/main/install_auto_prefix_db_plugin_php_myadmin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh
+sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/main/install_auto_prefix_db_plugin_php_myadmin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh
 ```

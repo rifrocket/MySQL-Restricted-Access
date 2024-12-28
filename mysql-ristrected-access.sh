@@ -174,6 +174,12 @@ EOF
     delete)
         USERNAME="$2"
         
+        # Prevent deletion of the root user
+        if [ "$USERNAME" = "root" ]; then
+            echo "Error: Cannot delete the root user."
+            exit 1
+        fi
+        
         # Prompt for MySQL root password
         echo "Please enter the MySQL root password:"
         read -s MYSQL_ROOT_PASSWORD
