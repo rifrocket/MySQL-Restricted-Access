@@ -18,7 +18,7 @@ This bash script automates the installation of a MySQL restricted access setup o
 Run the following one-liner on your server to automatically download and execute the script:
 
 ```bash
-sudo wget --no-check-certificate -O /usr/local/bin/mysql-ristrected-access.sh https://raw.githubusercontent.com/rifrocket/MySQL-Ristrected-Access/main/mysql-ristrected-access.sh; sudo bash /usr/local/bin/mysql-ristrected-access.sh
+sudo wget --no-check-certificate -O /usr/local/bin/mysql-ristrected-access.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/refs/heads/main/mysql-ristrected-access.sh; sudo bash /usr/local/bin/mysql-ristrected-access.sh
 ```
 
 Ensure the script is executable and run it with `bash`. You can make the script executable by running:
@@ -62,5 +62,5 @@ sudo /usr/local/bin/mysql-ristrected-access.sh delete user1
 ## Optional: Add prefix while creating databases using phpMyAdmin
 
 ```bash
-sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/main/install_auto_prefix_db_plugin_php_myadmin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh
+sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/refs/heads/main/install_auto_prefix_db_plugin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh
 ```
