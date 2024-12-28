@@ -16,6 +16,7 @@ usage() {
     echo "Actions:"
     echo "  create <username> <password> [db_prefix] - Create a new MySQL user"
     echo "  delete <username> - Delete an existing MySQL user and revoke all privileges"
+    echo "  delete-db <db_name> - Delete a specific database"
     exit 1
 }
 
@@ -206,6 +207,47 @@ EOF
 
         mysql_exec -e "DROP USER IF EXISTS '${USERNAME}'@'localhost';"
         echo "Deleted user '${USERNAME}'@'localhost'."
+
+        # Flush privileges to apply changes
+        mysql_exec -e "FLUSH PRIVILEGES;"
+        echo "Privileges flushed."
+
+        # Remove the temporary MySQL option file
+        rm -f "$TEMP_MY_CNF"
+        ;;
+    delete-db)
+        DB_NAME="$2"
+
+        # Check if the database name is provided
+        if [ -z "$DB_NAME" ]; then
+            echo "Error: Database name is required."
+            usage
+        fi
+
+        # Prompt for MySQL root password
+        echo "Please enter the MySQL root password:"
+        read -s MYSQL_ROOT_PASSWORD
+        echo
+
+        # Create a temporary MySQL option file
+        TEMP_MY_CNF=$(mktemp)
+        chmod 600 "$TEMP_MY_CNF"
+
+        cat > "$TEMP_MY_CNF" <<EOF
+[client]
+user=root
+password=${MYSQL_ROOT_PASSWORD}
+EOF
+
+        # Function to execute MySQL commands using the temporary option file
+        mysql_exec() {
+            mysql --defaults-extra-file="$TEMP_MY_CNF" "$@"
+        }
+
+        # Drop the specified database
+        mysql_exec -e "DROP DATABASE IF EXISTS \`${DB_NAME}\`;"
+
+        echo "Database '${DB_NAME}' has been deleted."
 
         # Flush privileges to apply changes
         mysql_exec -e "FLUSH PRIVILEGES;"

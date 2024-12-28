@@ -52,7 +52,28 @@ sudo /usr/local/bin/mysql-ristrected-access.sh delete <username>
 sudo /usr/local/bin/mysql-ristrected-access.sh delete user1
 ```
 
+### Delete a Database
+As the `root` user, you can delete any user's database using the following command:
+```bash
+sudo bash /usr/local/bin/mysql-ristrected-access.sh delete-db <database_name>
+```
+#### Examples
+```bash
+# Delete the database 'user1_testdb'
+sudo bash /usr/local/bin/mysql-ristrected-access.sh delete-db user1_testdb
+```
 
+#### Notes
+- The `delete-db` action requires `root` privileges.
+- Ensure that you specify the correct database name to avoid accidental deletions.
+
+### Delete a Database (User-Initiated)
+Users can delete **their own** databases using the stored procedure as described below:
+
+To delete a database owned by a user, execute the following command from the MySQL shell as the user:
+```sql
+CALL `admin`.delete_prefixed_db('database_name');
+```
 
 ## Notes
 - This script is specifically designed for Ubuntu servers and may not be compatible with other Linux distributions.
