@@ -143,7 +143,7 @@ EOF
         echo "Granted EXECUTE privilege on 'create_prefixed_db' and 'delete_prefixed_db' to '${USERNAME}'@'localhost'."
 
         # Revoke any global privileges the user might have
-        mysql_exec -e "REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${USERNAME}'@'localhost';"
+        mysql_exec -e "REVOKE ALL PRIVILEGES, GRANT OPTION ON *.* FROM '${USERNAME}'@'localhost';"
 
         echo "Revoked any existing global privileges from '${USERNAME}'@'localhost'."
 
@@ -165,7 +165,7 @@ EOF
         echo "Revoked CREATE privilege from '${USERNAME}'@'localhost'."
 
         # Flush privileges to apply changes
-        mysql_exec -e "FLUSH PRIVILEGES;"wh
+        mysql_exec -e "FLUSH PRIVILEGES;"
 
         echo "Privileges flushed."
 
