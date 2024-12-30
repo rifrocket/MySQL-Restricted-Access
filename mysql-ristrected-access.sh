@@ -76,15 +76,16 @@ DROP PROCEDURE IF EXISTS delete_prefixed_db$$
 -- Create the stored procedure
 CREATE PROCEDURE create_prefixed_db(IN db_name VARCHAR(64))
 BEGIN
-    -- Validate that db_name does not contain underscores
-    IF db_name LIKE '%\_%' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain underscores. Use a single underscore as prefix.';
-    END IF;
-
+    -- Declare all variables first
     DECLARE prefix VARCHAR(64);
     DECLARE prefixed_db VARCHAR(128);
     DECLARE stmt TEXT;
     DECLARE grant_stmt TEXT;
+
+    -- Validate that db_name does not contain underscores
+    IF db_name LIKE '%\_%' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain underscores. Use a single underscore as prefix.';
+    END IF;
 
     -- Extract the username from CURRENT_USER()
     SET prefix = CONCAT(SUBSTRING_INDEX(CURRENT_USER(), '@', 1), '_');
