@@ -76,6 +76,11 @@ DROP PROCEDURE IF EXISTS delete_prefixed_db$$
 -- Create the stored procedure
 CREATE PROCEDURE create_prefixed_db(IN db_name VARCHAR(64))
 BEGIN
+    -- Validate that db_name does not contain underscores
+    IF db_name LIKE '%\_%' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain underscores. Use a single underscore as prefix.';
+    END IF;
+
     DECLARE prefix VARCHAR(64);
     DECLARE prefixed_db VARCHAR(128);
     DECLARE stmt TEXT;
@@ -159,7 +164,7 @@ EOF
         echo "Revoked CREATE privilege from '${USERNAME}'@'localhost'."
 
         # Flush privileges to apply changes
-        mysql_exec -e "FLUSH PRIVILEGES;"
+        mysql_exec -e "FLUSH PRIVILEGES;"wh
 
         echo "Privileges flushed."
 
