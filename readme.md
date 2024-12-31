@@ -63,24 +63,19 @@ sudo bash /usr/local/bin/mysql-ristrected-access.sh delete-db <database_name>
 sudo bash /usr/local/bin/mysql-ristrected-access.sh delete-db user1_testdb
 ```
 
-#### Notes
+
 - The `delete-db` action requires `root` privileges.
 - Ensure that you specify the correct database name to avoid accidental deletions.
 
-### Delete a Database (User-Initiated)
-Users can delete **their own** databases using the stored procedure as described below:
 
-To delete a database owned by a user, execute the following command from the MySQL shell as the user:
-```sql
-CALL `admin`.delete_prefixed_db('database_name');
-```
 
 ## Notes
 - This script is specifically designed for Ubuntu servers and may not be compatible with other Linux distributions.
 - Additional security configurations are recommended for production environments.
 - Ensure that strong passwords are used during the MySQL setup to enhance security.
 
-## Optional: Add prefix while creating databases using phpMyAdmin
+
+## Optional: Ensuring AllowUserDropDatabase is set to true in phpMyAdmin's configuration to allow users to drop databases
 
 ```bash
 sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/refs/heads/main/install_auto_prefix_db_plugin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh

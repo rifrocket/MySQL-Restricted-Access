@@ -76,7 +76,6 @@ DROP PROCEDURE IF EXISTS delete_prefixed_db$$
 -- Create the stored procedure
 CREATE PROCEDURE create_prefixed_db(IN db_name VARCHAR(64))
 BEGIN
-    -- Declare all variables first
     DECLARE prefix VARCHAR(64);
     DECLARE prefixed_db VARCHAR(128);
     DECLARE stmt TEXT;
@@ -84,11 +83,16 @@ BEGIN
 
     -- Validate that db_name does not contain underscores
     IF db_name LIKE '%\_%' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain underscores. Use a single underscore as prefix.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain underscores.';
     END IF;
 
-    -- Extract the username from CURRENT_USER()
+    -- Additional validation to ensure db_name does not contain the prefix
     SET prefix = CONCAT(SUBSTRING_INDEX(CURRENT_USER(), '@', 1), '_');
+
+    -- Check if db_name contains the prefix
+    IF db_name LIKE CONCAT('%', prefix, '%') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Database name cannot contain the prefix.';
+    END IF;
 
     -- Create the prefixed database name
     SET prefixed_db = CONCAT(prefix, db_name);
@@ -143,26 +147,25 @@ EOF
         echo "Granted EXECUTE privilege on 'create_prefixed_db' and 'delete_prefixed_db' to '${USERNAME}'@'localhost'."
 
         # Revoke any global privileges the user might have
-        mysql_exec -e "REVOKE ALL PRIVILEGES, GRANT OPTION ON *.* FROM '${USERNAME}'@'localhost';"
+        mysql_exec -e "REVOKE ALL PRIVILEGES, GRANT OPTION FROM '${USERNAME}'@'localhost';"
 
         echo "Revoked any existing global privileges from '${USERNAME}'@'localhost'."
 
-        # Grant privileges on databases with the specific prefix
-        mysql_exec -e "GRANT ALL PRIVILEGES ON \`${DB_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
+        # Escape underscores in DB_PREFIX for accurate pattern matching
+        ESCAPED_PREFIX="${DB_PREFIX//_/\\_}"
 
-        # Grant DROP privilege explicitly to ensure drop option is visible in phpMyAdmin
-        mysql_exec -e "GRANT DROP ON \`${DB_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
+        # Grant ALL PRIVILEGES on databases with the specific prefix
+        mysql_exec -e "GRANT ALL PRIVILEGES ON \`${ESCAPED_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
 
-        # Grant ALTER privilege to ensure drop option is visible in phpMyAdmin
-        mysql_exec -e "GRANT ALTER ON \`${DB_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
+        echo "Granted ALL PRIVILEGES on databases with prefix '${DB_PREFIX}' to '${USERNAME}'@'localhost'."
 
-        # Grant CREATE privilege on specific databases to allow phpMyAdmin operations
-        mysql_exec -e "GRANT CREATE ON \`${DB_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
-
-        # Revoke the CREATE privilege globally to prevent direct database creation
+        # Revoke the CREATE privilege to prevent direct database creation
         mysql_exec -e "REVOKE CREATE ON *.* FROM '${USERNAME}'@'localhost';"
 
         echo "Revoked CREATE privilege from '${USERNAME}'@'localhost'."
+
+        # Grant necessary privileges to phpMyAdmin configuration storage
+        mysql_exec -e "GRANT SELECT, INSERT, UPDATE, DELETE ON \`phpmyadmin\`.* TO 'phpmyadmin'@'localhost';"
 
         # Flush privileges to apply changes
         mysql_exec -e "FLUSH PRIVILEGES;"
