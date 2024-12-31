@@ -80,3 +80,12 @@ sudo bash /usr/local/bin/mysql-ristrected-access.sh delete-db user1_testdb
 ```bash
 sudo wget --no-check-certificate -O /tmp/install_auto_prefix_db_plugin_php_myadmin.sh https://raw.githubusercontent.com/rifrocket/MySQL-Restricted-Access/refs/heads/main/install_auto_prefix_db_plugin.sh; sudo bash /tmp/install_auto_prefix_db_plugin_php_myadmin.sh
 ```
+restart your web server after running the above command.
+```bash
+sudo service apache2 restart
+```
+or 
+
+```bash
+sudo service nginx restart
+```

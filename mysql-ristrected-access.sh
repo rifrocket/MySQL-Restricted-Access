@@ -157,6 +157,12 @@ EOF
         # Grant ALL PRIVILEGES on databases with the specific prefix
         mysql_exec -e "GRANT ALL PRIVILEGES ON \`${ESCAPED_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
 
+        # Ensure DROP privilege is granted
+        mysql_exec -e "GRANT DROP ON \`${ESCAPED_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
+
+        # Ensure ALTER privilege is granted
+        mysql_exec -e "GRANT ALTER ON \`${ESCAPED_PREFIX}%\`.* TO '${USERNAME}'@'localhost';"
+
         echo "Granted ALL PRIVILEGES on databases with prefix '${DB_PREFIX}' to '${USERNAME}'@'localhost'."
 
         # Revoke the CREATE privilege to prevent direct database creation

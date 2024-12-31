@@ -37,14 +37,20 @@ backup_config() {
 enable_allow_user_drop_database() {
     echo "Ensuring AllowUserDropDatabase is set to true in phpMyAdmin's configuration..."
 
-    if grep -q "\$cfg\['AllowUserDropDatabase'\] *= *true;" "${CONFIG_FILE}"; then
+    if grep -q "\$cfg\['AllowUserDropDatabase'\]\s*=\s*true;" "${CONFIG_FILE}"; then
         echo "AllowUserDropDatabase is already set to true."
     else
         if grep -q "\$cfg\['AllowUserDropDatabase'\]" "${CONFIG_FILE}"; then
-            sudo sed -i "s/\$cfg\['AllowUserDropDatabase'\] *= *.*/\$cfg['AllowUserDropDatabase'] = true;/" "${CONFIG_FILE}"
+            sudo sed -i "s/\$cfg\['AllowUserDropDatabase'\]\s*=.*/\$cfg['AllowUserDropDatabase'] = true;/" "${CONFIG_FILE}"
             echo "Updated AllowUserDropDatabase to true in ${CONFIG_FILE}."
         else
-            sudo sed -i "/^\$cfg\['Plugins'\]/a \$cfg['AllowUserDropDatabase'] = true;" "${CONFIG_FILE}"
+            if grep -q "\$cfg\['Plugins'\]" "${CONFIG_FILE}"; then
+                sudo sed -i "/\$cfg\['Plugins'\]/a \$cfg['AllowUserDropDatabase'] = true;" "${CONFIG_FILE}"
+            else
+                sudo tee -a "${CONFIG_FILE}" > /dev/null <<EOL
+\$cfg['AllowUserDropDatabase'] = true;
+EOL
+            fi
             echo "Added AllowUserDropDatabase = true to ${CONFIG_FILE}."
         fi
     fi
@@ -54,7 +60,7 @@ enable_allow_user_drop_database() {
 validate_installation() {
     echo "Validating the plugin installation..."
 
-    if grep -q "\$cfg\['AllowUserDropDatabase'\] *= *true;" "${CONFIG_FILE}"; then
+    if grep -i "\$cfg\['AllowUserDropDatabase'\].*true" "${CONFIG_FILE}"; then
         echo "AllowUserDropDatabase is successfully registered in ${CONFIG_FILE}."
     else
         echo "Error: AllowUserDropDatabase is not registered in ${CONFIG_FILE}."
@@ -81,4 +87,6 @@ main() {
 }
 
 # Run the main function
+# Run the main function
+main
 main
